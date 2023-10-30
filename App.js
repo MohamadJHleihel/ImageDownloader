@@ -47,10 +47,10 @@ export default function ImageDownloader() {
  */
   useEffect(() => {
     if (searchText) {
-      fetch("https://pixabay.com/api/?key=40306185-9d3aa022bada519d0308e2cd8&q="+searchText+"&image_type=photo&pretty=true")
+      fetch("https://pixabay.com/api/?key=40306185-9d3aa022bada519d0308e2cd8&q="+searchText+"&image_type=photo&pretty=true&callback")
         .then(response => response.json())
         .then(json => {
-          console.log(json);})
+          console.log(json.collections);})
     }});
   return (
     <View style={{alignContent:'center',alignItems:'center',justifyContent:'center',marginTop:50}}>

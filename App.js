@@ -50,7 +50,8 @@ export default function ImageDownloader() {
       fetch("https://pixabay.com/api/?key=40306185-9d3aa022bada519d0308e2cd8&q="+searchText+"&image_type=photo&pretty=true&callback")
         .then(response => response.json())
         .then(json => {
-          console.log(json.collections);})
+          setSearchResults(json.hits);
+          console.log(json.hits[0].previewURL)})
     }});
   return (
     <View style={{alignContent:'center',alignItems:'center',justifyContent:'center',marginTop:50}}>
@@ -64,10 +65,10 @@ export default function ImageDownloader() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View>
-            <Image source={{ uri: item.webformatURL }} style={{ width: 300, height: 300 }} />
+            <Image source={{ uri: item.previewURL }} style={{ width: 300, height: 300 }} />
             <Button
               title="Download Image"
-              onPress={() => downloadImage(item.url)}
+              onPress={() => downloadImage(item.uri)}
             />
           </View>
         )}

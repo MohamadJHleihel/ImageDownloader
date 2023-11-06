@@ -3,6 +3,8 @@ import { View, Image, Button, Alert, TextInput, FlatList } from 'react-native';
 //import * as ImagePicker from 'expo-image-picker'; 
 import * as MediaLibrary from 'expo-media-library'; 
 import axios from 'axios';
+import * as FileSystem from 'expo-file-system';
+
 
 export default function ImageDownloader() {
   const [image, setImage] = useState(null);
@@ -27,6 +29,65 @@ export default function ImageDownloader() {
       Alert.alert('Permission required', 'You need to grant permissions to save the image.');
     }
   };
+  const safeSearch = true;
+
+
+ /*  const saveImageToGallery = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status === 'granted') {
+        // Download the image to the app’s cache directory
+        const fileUri = `${FileSystem.cacheDirectory}image.jpg`;
+        await FileSystem.downloadAsync(url, fileUri);
+        // Save the downloaded image to the media library
+        const asset = await MediaLibrary.createAssetAsync(fileUri);
+        const albumName = 'MyImages';
+        const album = await MediaLibrary.getAlbumAsync(albumName);
+        if (album === null) {
+          await MediaLibrary.createAlbumAsync(albumName, asset, false);
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+        }
+        alert('Image saved to gallery successfully!');
+      } else {
+        alert('Permission to access media library denied.');
+      }
+    } catch (error) {
+      console.error('Error saving image: ', error);
+    }
+  }; */
+
+  const saveImageToGallery = async (url) => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status === 'granted') {
+        // Download the image to the app’s cache directory
+        const fileUri = `${FileSystem.cacheDirectory}image.jpg`;
+        await FileSystem.downloadAsync(url, fileUri); // Pass the URL here
+        // Save the downloaded image to the media library
+        const asset = await MediaLibrary.createAssetAsync(fileUri);
+        const albumName = 'MyImages';
+        const album = await MediaLibrary.getAlbumAsync(albumName);
+        if (album === null) {
+          await MediaLibrary.createAlbumAsync(albumName, asset, false);
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+        }
+        alert('Image saved to gallery successfully!');
+      } else {
+        alert('Permission to access media library denied.');
+      }
+    } catch (error) {
+      console.error('Error saving image: ', error);
+    }
+  };
+
+
+
+
+
+
+
 
 /*   useEffect(() => {
     if (searchText) {
@@ -47,7 +108,7 @@ export default function ImageDownloader() {
  */
   useEffect(() => {
     if (searchText) {
-      fetch("https://pixabay.com/api/?key=40306185-9d3aa022bada519d0308e2cd8&q="+searchText+"&image_type=photo&pretty=true&callback")
+      fetch("https://pixabay.com/api/?key=40306185-9d3aa022bada519d0308e2cd8&q="+searchText+"&image_type=photo&pretty=true&callback&safsearch="+safeSearch)
         .then(response => response.json())
         .then(json => {
           setSearchResults(json.hits);
@@ -68,7 +129,7 @@ export default function ImageDownloader() {
             <Image source={{ uri: item.previewURL }} style={{ width: 300, height: 300 }} />
             <Button
               title="Download Image"
-              onPress={() => downloadImage(item.uri)}
+              onPress={() => saveImageToGallery(item.previewURL) }
             />
           </View>
         )}

@@ -129,7 +129,7 @@ export default function ImageDownloader() {
             <Image source={{ uri: item.previewURL }} style={{ width: 300, height: 300 }} />
             <Button
               title="Download Image"
-              onPress={() => saveImageToGallery(item.previewURL) }
+              onPress={() => saveImageToGallery(item.largeImageURL) }
             />
           </View>
         )}

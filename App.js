@@ -10,13 +10,17 @@ export default function ImageDownloader() {
   const [image, setImage] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [numItemsToShow, setNumItemsToShow] = useState(10);
+  const resetSearch = () => {
+    setSearchText(''); // Clear the search text
+    setSearchResults([]);}; // Clear the search results
 
   const requestPermission = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     return status === 'granted';
   };
 
-  const downloadImage = async (uri) => {
+/*   const downloadImage = async (uri) => {
     if (await requestPermission()) {
       try {
         const asset = await MediaLibrary.createAssetAsync(uri);
@@ -28,8 +32,8 @@ export default function ImageDownloader() {
     } else {
       Alert.alert('Permission required', 'You need to grant permissions to save the image.');
     }
-  };
-  const safeSearch = true;
+  }; */
+  const safeSearch = true; 
 
 
  /*  const saveImageToGallery = async () => {
@@ -112,21 +116,31 @@ export default function ImageDownloader() {
         .then(response => response.json())
         .then(json => {
           setSearchResults(json.hits);
-          console.log(json.hits[0].previewURL)})
-    }});
+          
+    });}},[searchText]);
+
+    
   return (
-    <View style={{alignContent:'center',alignItems:'center',justifyContent:'center',marginTop:50}}>
+    <View style={{alignContent:'center',alignItems:'center',justifyContent:'center',marginTop:100}}>
       <TextInput
         placeholder="Search for images"
         value={searchText}
         onChangeText={setSearchText}
       />
+          <Button
+        title="Load More"
+        onPress={() => setNumItemsToShow(numItemsToShow + 10)} // Adjust the increment as needed
+      />
+       <Button
+        title="Reset"
+        onPress={resetSearch} // Call the reset function
+      />
       <FlatList
-        data={searchResults}
+        data={searchResults.slice(0, numItemsToShow)}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View>
-            <Image source={{ uri: item.previewURL }} style={{ width: 300, height: 300 }} />
+            <Image source={{ uri: item.previewURL }} style={{ width: 200, height: 200 ,borderRadius:20}} />
             <Button
               title="Download Image"
               onPress={() => saveImageToGallery(item.largeImageURL) }
@@ -134,6 +148,7 @@ export default function ImageDownloader() {
           </View>
         )}
       />
+        
     </View>
   );
 }
